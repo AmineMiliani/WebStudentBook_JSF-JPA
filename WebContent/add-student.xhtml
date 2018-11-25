@@ -22,15 +22,20 @@
 		<ui:insert name="content">
 			<h:form>
 				<label>FirstName: </label>
-				<h:inputText value="#{StudentManager.student.first_name}" />
+				<h:inputText value="#{StudentManager.student.first_name}" required="true" requiredMessage="First name is needed" />
 				<label>LastName: </label>
-				<h:inputText value="#{StudentManager.student.last_name}" />
+				<h:inputText value="#{StudentManager.student.last_name}" required="true" requiredMessage="Last name is needed" />
 				<label>Email: </label>
-				<h:inputText value="#{StudentManager.student.email}" />
+				<h:inputText value="#{StudentManager.student.email}">
+				</h:inputText>>
 
 				<h:commandButton action="#{StudentManager.AddStudent}" value="Add" />
 			</h:form>
+			<h:outputLink value="list-students.xhtml">
+				<h:outputText value="Back to List" styleClass="outputText"></h:outputText>
+			</h:outputLink>
 		</ui:insert>
+
 	</div>
 
 	<div id="footer">

@@ -28,9 +28,12 @@
 				<h:inputText value="#{StudentManager.editStudent.last_name}" />
 				<label>Email: </label>
 				<h:inputText value="#{StudentManager.editStudent.email}" />
-				<h:commandButton action="#{StudentManager.UpdateStudent}" value="Edit" />
+				<h:commandButton action="#{StudentManager.UpdateStudent}"
+					value="Edit" />
 			</h:form>
-
+			<h:outputLink value="list-students.xhtml">
+				<h:outputText value="Back to List" styleClass="outputText"></h:outputText>
+			</h:outputLink>
 		</ui:insert>
 	</div>
 
