@@ -8,37 +8,58 @@
 <title><ui:insert name="title">Default title</ui:insert></title>
 </head>
 
+<f:metadata>
+	<f:event type="preRenderView" listener="#{StudentManager.LoadStudents}" />
+</f:metadata>
 <body>
 	<ui:debug hotkey="x"
 		rendered="#{initParam['javax.faces.FACELETS_DEVELOPMENT']}" />
 
 	<div id="header">
 		<ui:insert name="header">
-    	Header area.  See comments below this line in the source.
-    	<!--  include your header file or uncomment the include below and create header.xhtml in this directory -->
-			<!-- <ui:include src="header.xhtml"/> -->
+
 		</ui:insert>
 	</div>
 
 
 	<div id="content">
 		<ui:insert name="content">
-    	Content area.  See comments below this line in the source.
-    	<!--  include your content file or uncomment the include below and create content.xhtml in this directory -->
-			<!-- <div> -->
-			<!-- <ui:include src="content.xhtml"/> -->
-			<!-- </div> -->
+			<h:form>
+				<h:commandButton action="add-student" value="Add" />
+			</h:form>
+			<h:form>
+				<table>
+					<tr>
+						<th>ID</th>
+						<th>First Name</th>
+						<th>Last Name</th>
+						<th>Email</th>
+					</tr>
+					<ui:repeat var="student" value="#{StudentManager.students}">
+						<tr>
+							<td>#{student.id}</td>
+							<td>#{student.first_name}</td>
+							<td>#{student.last_name}</td>
+							<td>#{student.email}</td>
+							<td><h:commandButton
+									action="#{StudentManager.LoadStudents(student.id)}"
+									value="Edit" styleClass="button"></h:commandButton></td>
+							<td><h:commandButton
+									action="#{StudentManager.DeleteStudent(student.id)}"
+									value="Delete" styleClass="button">
+								</h:commandButton></td>
+						</tr>
+					</ui:repeat>
+				</table>
+			</h:form>
 		</ui:insert>
 	</div>
 
 	<div id="footer">
 		<ui:insert name="footer">
-    	Footer area.  See comments below this line in the source.
-    	<!--  include your header file or uncomment the include below and create footer.xhtml in this directory -->
-			<!--<ui:include src="footer.xhtml"/>  -->
+
 		</ui:insert>
 	</div>
 
 </body>
-
 </html>
