@@ -19,7 +19,7 @@ public class StudentManager {
 	private Student student;
 	private List<Student> students;
 	private StudentDBUtil db;	
-	private Student editStudent;
+	private StudentEntity editStudent;
 	public StudentManager() {
 		super();
 		db = new StudentDBUtil();
@@ -64,7 +64,7 @@ public class StudentManager {
 	
 	public String UpdateStudent() {
 		db.updateStudent(editStudent);
-		editStudent = new Student();
+		editStudent = new StudentEntity();
 		return"list-students";
 	}
 	
@@ -86,13 +86,13 @@ public class StudentManager {
 
 
 
-	public Student getEditStudent() {
+	public StudentEntity getEditStudent() {
 		return editStudent;
 	}
 
 
 
-	public void setEditStudent(Student editStudent) {
+	public void setEditStudent(StudentEntity editStudent) {
 		this.editStudent = editStudent;
 	}
 

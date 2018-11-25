@@ -6,149 +6,56 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.sql.DataSource;
 
 public class StudentDBUtil {
-	private DataSource dataSource;
+	private static final String PERSIS_NAME = "JSFJPA";
+	private static EntityManagerFactory factory = Persistence.createEntityManagerFactory(PERSIS_NAME);
+	private static EntityManager em = factory.createEntityManager();
+	private static EntityTransaction et = em.getTransaction();
 
-
-	public StudentDBUtil() {
-		try {
-			dataSource = getDataSource();
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	@SuppressWarnings("unchecked")
+	public static List<Student> getStudents() {
+		if(!et.isActive()) {
+			et.begin();
 		}
+		List<Student> students = em.createQuery("SELECT s FROM StudentEntity s order by s.id").getResultList();
+		return students;
+	}
+	public static StudentEntity fetchStudent(int id) {
+		Query query = em.createQuery("SELECT s FROM StudentEntity s WHERE s.id = :id");
+		query.setParameter("id", id);
+		StudentEntity student = (StudentEntity) query.getSingleResult();
+		return student;
+	}
+
+	public static void updateStudent(StudentEntity student) {
+		em.merge(student);
+		et.commit();
+	}
+	public static void addStudent(Student student) {
+		StudentEntity studententity = new StudentEntity();
+		studententity.setFirst_name(student.getFirst_name());
+		studententity.setLast_name(student.getLast_name());
+		studententity.setEmail(student.getEmail());
+		em.persist(studententity);
+		et.commit();
+	}
+	public static void deleteStudent(int id) {
+		StudentEntity student = new StudentEntity();
+		student.setId(id);
+		em.remove(em.merge(student));
+		et.commit();
 	}
 
 
-	public DataSource getDataSource() throws NamingException{
-		String jndi="java:comp/env/jdbc/studentdb";
-		Context context = new InitialContext();DataSource dataSource = (DataSource) context.lookup(jndi);
-		return dataSource;
-	}
-
-	public List<Student> getStudents() throws Exception {
-		List<Student> students= new ArrayList<Student>();
-		Connection myConn=null;
-		Statement myStmt = null;
-		ResultSet myRs= null;
-		try {
-			myConn = dataSource.getConnection();
-			myStmt= myConn.createStatement();
-			String sql= "select * from student order by id";
-			myRs = myStmt.executeQuery(sql);
-			while(myRs.next()){
-				int id = myRs.getInt("id");
-				String firstName=myRs.getString("first_name");
-				String lastName=myRs.getString("last_name");
-				String email = myRs.getString("email");
-				Student tempStudent= new Student(id,firstName,lastName,email);
-				students.add(tempStudent);
-			}
-			return students;
-		} finally{
-			close(myConn,myStmt,myRs);
-		}
-	}
-	private void close(Connection myConn, Statement myStmt, ResultSet myRs) {
-		try{
-			if(myStmt!=null)
-				myStmt.close();
-			if(myRs!=null)
-				myRs.close();
-			if(myConn!=null)
-				myConn.close();
-		}catch(Exception e){
-			System.out.println(e.getMessage());
-		}
-	}
-	public void addStudent(Student student){
-		Connection myConn=null;
-		PreparedStatement myStmt = null;
-		ResultSet myRs= null;
-		try {
-			myConn = dataSource.getConnection();
-			String sql = "INSERT INTO Student (first_name, last_name, email) VALUES (?, ?, ?)";
-			myStmt = myConn.prepareStatement(sql);
-			String firstName = student.getFirst_name();
-			String lastName = student.getLast_name();
-			String email = student.getEmail();
-			myStmt.setString(1, firstName);
-			myStmt.setString(2, lastName);
-			myStmt.setString(3, email);
-			myStmt.execute();
-		}
-		catch(Exception e){
-			System.out.println(e.getMessage());
-		}
-		finally{
-			close(myConn,myStmt,myRs);
-		}
-	}
-	public Student fetchStudent(int id) {
-		Connection myConn=null;
-		Statement myStmt = null;
-		ResultSet myRs= null;
-		Student student=null;
-		try {
-			myConn = dataSource.getConnection();
-			myStmt= myConn.createStatement();
-			String sql= "select * from student where id="+id;
-			myRs = myStmt.executeQuery(sql);
-			while(myRs.next()){String firstName=myRs.getString("first_name");
-			String lastName=myRs.getString("last_name");String email = myRs.getString("email");
-			student = new Student(id,firstName,lastName,email);
-			}
-			return student;
-		}
-		catch(Exception e)
-		{
-			System.out.println(e.getMessage());
-			return null;
-		} 
-		finally{
-			close(myConn,myStmt,myRs);
-		}
-	}
-	
-	public void updateStudent(Student student) {
-		Connection myConn=null;
-		PreparedStatement myStmt = null;
-		try {
-		myConn = dataSource.getConnection();
-		String sql = "update student set first_name=?, last_name=?,email=? where id=?";
-		myStmt = myConn.prepareStatement(sql);
-		myStmt.setString(1, student.getFirst_name());
-		myStmt.setString(2, student.getLast_name());
-		myStmt.setString(3, student.getEmail());
-		myStmt.setInt(4,student.getId());
-		myStmt.execute();
-		}
-		catch(Exception e){
-		System.out.println(e.getMessage());
-		}
-		finally{
-		close(myConn,myStmt,null);
-		}
-		}
-
-	
-	public void deleteStudent(int id) {
-		// TODO Auto-generated method stub
-		Connection myConn=null;
-		Statement myStmt = null;
-		try {
-		myConn = dataSource.getConnection();
-		myStmt= myConn.createStatement();
-		String sql= "delete from student where id="+id;
-		myStmt.execute(sql);
-		}catch(Exception e){
-		System.out.println(e.getMessage());
-		} finally{ close(myConn,myStmt,null); }}
 }
 
