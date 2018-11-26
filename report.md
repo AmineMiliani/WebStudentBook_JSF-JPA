@@ -8,6 +8,8 @@ author:
 - Nathan Immacolato
 date:
 - 2018.11.25
+fontfamily:
+- helvet
 ---
 
 ****
@@ -17,6 +19,10 @@ The goal of this project was to redo the last one with a different strategy, usi
 ****
 # What was done
 The project is composed of a few different faces, so we will go through each one.
+
+We  started the project by the previous JSP proejct, then transformed it into a JSF project.
+We made the JSF one work with the DBUtils class, to talk with the database, then transformed the DBUtils to fit a use in JPA.
+We did this to prevent working on everything at the same time and be able to advance with small understandable steps.
 
 ## List Students
 In this page we display a list of the students, gathered from the database.
